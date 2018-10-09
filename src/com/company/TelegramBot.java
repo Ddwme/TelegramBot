@@ -6,8 +6,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -21,15 +25,94 @@ public class TelegramBot extends TelegramLongPollingBot {
 
             long chat_id = update.getMessage().getChatId();
 
-            SendMessage message = new SendMessage()
-                    .setChatId(chat_id)
-                    .setText(message_text);
-            try {
-                execute(message);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+            if (message_text.equals("/start")) {
+
+                SendMessage message = new SendMessage()
+                        .setChatId(chat_id)
+                        .setText(message_text);
+
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            } else if (message_text.equals("/pic")) {
+                SendPhoto msg = new SendPhoto()
+                        .setChatId(chat_id)
+                        .setPhoto("AgADAgADuKoxG1dE6UmOGOcCFvHmM0Ljtw4ABI0xtSzwD6X0efUAAgI")
+                        .setCaption("Photo");
+                try {
+                    execute(msg);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            } else if (message_text.equals("/markup")) {
+                SendMessage message = new SendMessage()
+                        .setChatId(chat_id)
+                        .setText("Here your keyboard");
+                // Create ReplyKeyboardMarkup object
+                ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+                // Create the keyboard (list of keyboard rows)
+                List<KeyboardRow> keyboard = new ArrayList<>();
+                // Create a keyboard row
+                KeyboardRow row = new KeyboardRow();
+
+                row.add("Row 1 Button 1");
+                row.add("Row 1 Button 2");
+                row.add("Row 1 Button 3");
+
+                keyboard.add(row);
+
+                row = new KeyboardRow();
+                row.add("Row 2 Button 1");
+                row.add("Row 2 Button 2");
+                row.add("Row 2 Button 3");
+
+                keyboard.add(row);
+
+                keyboardMarkup.setKeyboard(keyboard);
+
+                message.setReplyMarkup(keyboardMarkup);
+
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            } else if (message_text.equals("Row 1 Button 1")){
+                SendPhoto msg = new SendPhoto()
+                        .setChatId(chat_id)
+                        .setPhoto("AgADAgADuKoxG1dE6UmOGOcCFvHmM0Ljtw4ABI0xtSzwD6X0efUAAgI")
+                        .setCaption("Photo");
+                try {
+                    execute(msg);
+                } catch (TelegramApiException e){
+                    e.printStackTrace();
+                }
+
+            } else if (message_text.equals("/hide")){
+                SendMessage msg = new SendMessage()
+                        .setChatId(chat_id)
+                        .setText("Keyboard hidden");
+                ReplyKeyboardRemove keyboardMarkup = new ReplyKeyboardRemove();
+                msg.setReplyMarkup(keyboardMarkup);
+                try {
+                    execute(msg);
+                } catch (TelegramApiException e){
+                    e.printStackTrace();
+                }
+
+            } else {
+                SendMessage message = new SendMessage()
+                        .setChatId(chat_id)
+                        .setText("Unknown command");
+                try {
+                    execute(message);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
             }
-        }else if (update.hasMessage() && update.getMessage().hasPhoto()){
+        } else if (update.hasMessage() && update.getMessage().hasPhoto()) {
             // Message contains photo
             // Set variables
 
